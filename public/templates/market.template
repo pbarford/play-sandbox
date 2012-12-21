@@ -1,5 +1,5 @@
 <div id="{{id}}">
-	<div style="border:1px solid gray;">
+	<div class="well" style="width:250px">
 		<h3 class="ui-accordian-header">{{title}}</h3>
 		<div>{{status}}</div>
 	<div>

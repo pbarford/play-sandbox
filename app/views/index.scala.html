@@ -1,116 +1,129 @@
 @main(null) {
     <link rel="stylesheet" href="@routes.Assets.at("stylesheets/slider.css")">
-    
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/bootstrap.min.css")">
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+    
     <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
     <script src="@routes.Assets.at("javascripts/slider.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/handlebars-1.0.rc.1.js")" type="text/javascript"/></script>
+    <script src="@routes.Assets.at("js/bootstrap.min.js")" type="text/javascript"></script>
+    
     <script id="market-template" src="@routes.Assets.at("templates/market.template")" type="text/x-handlebars-template" /></script>
-        
-    <button class="subscribe">subscribe</button>
-    <button class="unsubscribe">unsubscribe</button>
-    
-    <button class="send">send</button>
-    <br>
-    <br>
-    <div id="accordion">
-    	<h3>Last Message</h3>
-    	<div>
-    		<div id="last-msg"></div>
-    	</div>
-    	<h3>Recent Messages</h3>
-    	<div>
-	    	<div class="scroll-pane" style="width:95%">
-	    		<div style="display: inline;">
-	  			<ol class="mq-messages">
-	  			</ol>
-	  			</div> 
-		  		
-			</div>
+    <div style="margin: 50px">
+	    <div class="btn-group">
+	  		<button class="btn subscribe">subscribe</button>
+	  		<button class="btn unsubscribe">unsubscribe</button>
+	  		<button class="btn send">send</button>
 		</div>
-    </div>
-    
-    <script type="text/javascript" charset="utf-8">
-    
-        $(function() {
-        	var source;
-        	var template;
-        	$.ajax({
-      		  url: "@routes.Assets.at("templates/market.template")",
-      		  cache: true,
-      		  success: function(data) {
-      			  source = data;
-      			  template = Handlebars.compile(source);
-      		  }
-      		});      
-        	
-        	//{ "id": 1234567, "title": "Win-Draw-Win", "status": "Active" }
-        	//{ "markets" : [{"id": 1234567, "title": "Win-Draw-Win", "status": "Active" }, {"id": 34567, "title": "First Goal", "status": "Suspended" }] } 
-        	
-            var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
-                        
-            $('button.send').click(function() {
-                sock.send("I'm sending a message now.")
-            });
-            
-            $('button.subscribe').click(function() {
-            	sock = new WS("@routes.ControllerFactory.application.subscribe(12345).webSocketURL(request)");
-            	sock.onmessage = function(event) {
-                	$('#last-msg').fadeOut('slow', function() {
-                	    $('#last-msg').html(event.data);
-                	    $('#last-msg').fadeIn('slow');
-                	});
-                    $('.mq-messages').append("<li>" + event.data + "</li>");
-
-                    $("#markets").updateMarkets(template, $.parseJSON(event.data));
-                    
-                    setSlider($('.scroll-pane'));
-                }            	               
-            });
-            
-            $('button.unsubscribe').click(function() {
-            	$.ajax({
-            		  url: "@routes.ControllerFactory.application.unsubscribe(12345)",
-            		  success: function(data) {
-            		  }
-            		});                
-            });    
-        })
-        
-        $.fn.updateMarkets = function(template, json) { 
-            
-            $.each(json.markets, function () {            	
-            	var html = template(this);
-                console.log(html);
-                var el = "#" + this.id;
-                console.log(el);
-            	if($(el).length > 0) {    
-                	$(el).fadeOut('slow', function() {
-            	    	$(el).html(html);
-            	    	$(el).fadeIn('slow');
-            		});
-            	} else {
-            		$("#markets").append(html);
-        	    	
-            	}
-            });
-            
-            $("#markets").fadeIn('slow');
-        }
-        
-        $(function() {
-        	$("#accordion").accordion( {
-        		heightStyle: "content",
-        		activate: function( event, ui ) {
-        			setSlider($('.scroll-pane'));
-        		}
-        	});
-        })
-        
-    </script>
-    <br><br>
-    <div id="markets" style="display:none;">
-    </div>
-
+	    <br>
+	    <br>
+	    <div class="well">
+	    	<div style="overflow: auto">
+	    		<div style="float:left; padding-right: 15px"><span class="badge badge-info" style="position:relative">Last Message</span></div>
+	    		<div id="last-msg" style="float: left;"></div>
+			</div>
+	    </div>
+	    
+	    <!-- 
+	    <div id="accordion">
+	    
+	    	<h3><span class="label label-info">Last Message</span></h3>
+	    	<div>
+	    		<div id="last-msg"></div>
+	    	</div>
+	    	<h3>Recent Messages</h3>
+	    	<div>
+		    	<div class="scroll-pane" style="width:95%">
+		    		<div style="display: inline;">
+		  			<ol class="mq-messages">
+		  			</ol>
+		  			</div> 
+			  		
+				</div>
+			</div>
+	    </div>
+	     -->
+	    <script type="text/javascript" charset="utf-8">
+	    
+	        $(function() {
+	        	var source;
+	        	var template;
+	        	$.ajax({
+	      		  url: "@routes.Assets.at("templates/market.template")",
+	      		  cache: true,
+	      		  success: function(data) {
+	      			  source = data;
+	      			  template = Handlebars.compile(source);
+	      		  }
+	      		});      
+	        	
+	        	//{ "id": 1234567, "title": "Win-Draw-Win", "status": "Active" }
+	        	//{ "markets" : [{"id": 1234567, "title": "Win-Draw-Win", "status": "Active" }, {"id": 34567, "title": "First Goal", "status": "Suspended" }] } 
+	        	
+	            var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
+	                        
+	            $('button.send').click(function() {
+	                sock.send("I'm sending a message now.")
+	            });
+	            
+	            $('button.subscribe').click(function() {
+	            	sock = new WS("@routes.ControllerFactory.application.subscribe(12345).webSocketURL(request)");
+	            	sock.onmessage = function(event) {
+	                	$('#last-msg').fadeOut('slow', function() {
+	                	    $('#last-msg').html(event.data);
+	                	    $('#last-msg').fadeIn('slow');
+	                	});
+	                    //$('.mq-messages').append("<li>" + event.data + "</li>");						
+	                    //setSlider($('.scroll-pane'));
+	                    
+	                    $("#markets").updateMarkets(template, $.parseJSON(event.data));
+	                }            	               
+	            });
+	            
+	            $('button.unsubscribe').click(function() {
+	            	$.ajax({
+	            		  url: "@routes.ControllerFactory.application.unsubscribe(12345)",
+	            		  success: function(data) {
+	            		  }
+	            		});                
+	            });    
+	        })
+	        
+	        $.fn.updateMarkets = function(template, json) { 
+	            
+	            $.each(json.markets, function () {            	
+	            	var html = template(this);
+	                console.log(html);
+	                var el = "#" + this.id;
+	                console.log(el);
+	            	if($(el).length > 0) {    
+	                	$(el).fadeOut('slow', function() {
+	            	    	$(el).html(html);
+	            	    	$(el).fadeIn('slow');
+	            		});
+	            	} else {
+	            		$("#markets").append(html);
+	        	    	
+	            	}
+	            });
+	            
+	            $("#markets").fadeIn('slow');
+	        }
+	        
+	        
+	        //$(function() {
+	        //	$("#accordion").accordion( {
+	        //		heightStyle: "content",
+	        //		activate: function( event, ui ) {
+	        //			setSlider($('.scroll-pane'));
+	        //		}
+	        //	});
+	        //})
+	        
+	    </script>
+	    <br><br>
+	    <div id="markets" style="display:none;">
+	    </div>
+	</div>
 }
 
