@@ -15,7 +15,7 @@ public class RabbitMqConfiguration {
 	
     @Bean
     public ConnectionFactory connectionFactory() throws IOException {
-        CachingConnectionFactory connectionFactory = new CachingConnectionFactory("172.18.48.104");
+        CachingConnectionFactory connectionFactory = new CachingConnectionFactory("127.0.0.1");
         connectionFactory.setUsername("guest");
         connectionFactory.setPassword("guest");        
         return connectionFactory;
