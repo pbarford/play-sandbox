@@ -1,4 +1,6 @@
-<div id="{{id}}" style="border:1px solid gray;">
-	<h3 class="ui-accordian-header">{{title}}</h3>
-	<div>{{status}}</div>
-<div>
+<div id="{{id}}">
+	<div style="border:1px solid gray;">
+		<h3 class="ui-accordian-header">{{title}}</h3>
+		<div>{{status}}</div>
+	<div>
+</div>

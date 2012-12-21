@@ -41,13 +41,11 @@
       		  success: function(data) {
       			  source = data;
       			  template = Handlebars.compile(source);
-      			  console.log(source);
-      			  console.log(template);
       		  }
       		});      
         	
         	//{ "id": 1234567, "title": "Win-Draw-Win", "status": "Active" }
-        	//{ "markets" : [{"id": 1234567, "title": "Win-Draw-Win", "status": "Active" }, {"id": 1234567, "title": "First Goal", "status": "Suspended" }] } 
+        	//{ "markets" : [{"id": 1234567, "title": "Win-Draw-Win", "status": "Active" }, {"id": 34567, "title": "First Goal", "status": "Suspended" }] } 
         	
             var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
                         
@@ -81,12 +79,23 @@
         
         $.fn.updateMarkets = function(template, json) { 
             
-            $('#markets').html("");
-            $.each(json.markets, function () {
+            $.each(json.markets, function () {            	
             	var html = template(this);
-                console.log(html)
-                $('#markets').append(html);	
+                console.log(html);
+                var el = "#" + this.id;
+                console.log(el);
+            	if($(el).length > 0) {    
+                	$(el).fadeOut('slow', function() {
+            	    	$(el).html(html);
+            	    	$(el).fadeIn('slow');
+            		});
+            	} else {
+            		$("#markets").append(html);
+        	    	
+            	}
             });
+            
+            $("#markets").fadeIn('slow');
         }
         
         $(function() {
@@ -99,8 +108,8 @@
         })
         
     </script>
-    
-    <div id="markets">
+    <br><br>
+    <div id="markets" style="display:none;">
     </div>
 
 }
